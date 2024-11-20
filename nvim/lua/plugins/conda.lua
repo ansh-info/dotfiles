@@ -1,4 +1,5 @@
--- Create: ~/.config/nvim/lua/plugins/conda.lua
+-- ~/.config/nvim/lua/plugins/conda.lua
+
 return {
   {
     "nvim-telescope/telescope.nvim",
@@ -6,8 +7,7 @@ return {
       "nvim-lua/plenary.nvim",
     },
     keys = {
-      { "<leader>c9", "<cmd>CondaManager<cr>", desc = "Conda Environment Manager" },
-      { "<leader>c8", "<cmd>CondaCreate<cr>", desc = "Create Conda Environment" },
+      { "<leader>ce", "<cmd>CondaManager<cr>", desc = "Conda Environment Manager" },
     },
     config = function()
       local pickers = require("telescope.pickers")
@@ -70,28 +70,30 @@ return {
         return env_names
       end
 
-      -- Create environment function
-      local function create_conda_env()
-        -- Create an input prompt for environment name
-        vim.ui.input({ prompt = "Enter new environment name: " }, function(env_name)
-          if not env_name or env_name == "" then
-            vim.notify("No environment name provided", vim.log.levels.WARN)
-            return
+      -- Function to safely restart LSP
+      local function restart_lsp()
+        local function reload_current_buf()
+          local bufnr = vim.api.nvim_get_current_buf()
+          local bufname = vim.api.nvim_buf_get_name(bufnr)
+          -- Only reload if it's a real file
+          if bufname ~= "" and vim.fn.filereadable(bufname) == 1 then
+            vim.cmd("e!")
           end
+        end
 
-          -- Create floating window for packages
-          vim.ui.input({ prompt = "Enter packages (space-separated): " }, function(packages)
-            if not packages then
-              packages = ""
-            end
+        -- Get active LSP clients
+        local active_clients = vim.lsp.get_clients()
 
-            -- Create terminal window
-            vim.cmd("split")
-            local cmd = string.format("conda create -n %s python %s", env_name, packages)
-            vim.notify("Creating environment: " .. env_name, vim.log.levels.INFO)
-            vim.cmd("terminal " .. cmd)
-          end)
-        end)
+        -- Stop all LSP clients
+        for _, client in ipairs(active_clients) do
+          vim.lsp.stop_client(client.id)
+        end
+
+        -- Wait briefly to ensure clients are stopped
+        vim.defer_fn(function()
+          reload_current_buf()
+          vim.notify("LSP restarted", vim.log.levels.INFO)
+        end, 500)
       end
 
       -- List and select environment function
@@ -115,7 +117,7 @@ return {
                 actions.close(prompt_bufnr)
                 local selection = action_state.get_selected_entry()
 
-                -- Activate the selected environment
+                -- Get environment path
                 local env_path =
                   get_command_output(string.format("conda env list | grep '%s' | awk '{print $2}'", selection.value))
 
@@ -135,8 +137,8 @@ return {
                 -- Notify user
                 vim.notify("Activated environment: " .. selection.value, vim.log.levels.INFO)
 
-                -- Reload LSP
-                vim.cmd("LspRestart")
+                -- Restart LSP safely
+                restart_lsp()
               end)
               return true
             end,
@@ -144,9 +146,8 @@ return {
           :find()
       end
 
-      -- Register commands
+      -- Register command
       vim.api.nvim_create_user_command("CondaManager", conda_manager, {})
-      vim.api.nvim_create_user_command("CondaCreate", create_conda_env, {})
     end,
   },
 }
