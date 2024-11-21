@@ -79,6 +79,7 @@ brew install font-hack-nerd-font
 
 ```bash
 git clone https://github.com/ansh-info/dotfiles.git
+cd dotfiles
 ```
 
 #### zshrc configuration
