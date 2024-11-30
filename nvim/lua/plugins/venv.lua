@@ -67,6 +67,7 @@ return {
         -- Check Homebrew Python installations
         local brew_paths = {
           "/opt/homebrew/bin/python3",
+          "/opt/homebrew/bin/python3.12",
           "/opt/homebrew/bin/python3.11",
           "/opt/homebrew/bin/python3.10",
           "/opt/homebrew/bin/python3.9",

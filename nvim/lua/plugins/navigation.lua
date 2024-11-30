@@ -1,4 +1,3 @@
--- ~/.config/nvim/lua/plugins/navigation.lua
 return {
   -- Improved f/t motions
   {
@@ -12,7 +11,6 @@ return {
     end,
     opts = { labeled_modes = "nx" },
   },
-
   -- Jump to any location
   {
     "folke/flash.nvim",
@@ -53,76 +51,19 @@ return {
       },
     },
   },
-  --
-  -- -- Better buffer navigation
-  -- {
-  --   "ThePrimeagen/harpoon",
-  --   dependencies = {
-  --     "nvim-lua/plenary.nvim",
-  --   },
-  --   keys = {
-  --     {
-  --       "<leader>ha",
-  --       function()
-  --         require("harpoon.mark").add_file()
-  --       end,
-  --       desc = "Add to Harpoon",
-  --     },
-  --     {
-  --       "<leader>hh",
-  --       function()
-  --         require("harpoon.ui").toggle_quick_menu()
-  --       end,
-  --       desc = "Harpoon Menu",
-  --     },
-  --     {
-  --       "<C-h>",
-  --       function()
-  --         require("harpoon.ui").nav_file(1)
-  --       end,
-  --       desc = "Harpoon File 1",
-  --     },
-  --     {
-  --       "<C-j>",
-  --       function()
-  --         require("harpoon.ui").nav_file(2)
-  --       end,
-  --       desc = "Harpoon File 2",
-  --     },
-  --     {
-  --       "<C-k>",
-  --       function()
-  --         require("harpoon.ui").nav_file(3)
-  --       end,
-  --       desc = "Harpoon File 3",
-  --     },
-  --     {
-  --       "<C-l>",
-  --       function()
-  --         require("harpoon.ui").nav_file(4)
-  --       end,
-  --       desc = "Harpoon File 4",
-  --     },
-  --   },
-  --   opts = {
-  --     global_settings = {
-  --       save_on_toggle = true,
-  --       save_on_change = true,
-  --     },
-  --   },
-  -- },
-
-  -- Better buffer navigation
+  -- Enhanced Harpoon configuration
   {
     "ThePrimeagen/harpoon",
     dependencies = {
       "nvim-lua/plenary.nvim",
     },
     keys = {
+      -- Basic operations
       {
         "<leader>ha",
         function()
           require("harpoon.mark").add_file()
+          vim.notify("File added to Harpoon", vim.log.levels.INFO)
         end,
         desc = "Add to Harpoon",
       },
@@ -133,7 +74,7 @@ return {
         end,
         desc = "Harpoon Menu",
       },
-      -- Changed from C-h/j/k/l to M-1/2/3/4 (Alt/Meta + number)
+      -- File navigation with Meta/Alt + number
       {
         "<M-1>",
         function()
@@ -162,15 +103,63 @@ return {
         end,
         desc = "Harpoon File 4",
       },
+      -- New navigation commands
+      {
+        "<leader>hn",
+        function()
+          require("harpoon.ui").nav_next()
+        end,
+        desc = "Next Harpoon Mark",
+      },
+      {
+        "<leader>hp",
+        function()
+          require("harpoon.ui").nav_prev()
+        end,
+        desc = "Prev Harpoon Mark",
+      },
+      -- Remove current file from Harpoon
+      {
+        "<leader>hr",
+        function()
+          require("harpoon.mark").rm_file()
+          vim.notify("File removed from Harpoon", vim.log.levels.INFO)
+        end,
+        desc = "Remove from Harpoon",
+      },
+      -- Clear all Harpoon marks
+      {
+        "<leader>hc",
+        function()
+          require("harpoon.mark").clear_all()
+          vim.notify("Cleared all Harpoon marks", vim.log.levels.INFO)
+        end,
+        desc = "Clear All Harpoon Marks",
+      },
+      -- List marks in Telescope
+      {
+        "<leader>ht",
+        function()
+          require("telescope").load_extension("harpoon")
+          require("telescope").extensions.harpoon.marks()
+        end,
+        desc = "List Harpoon Marks in Telescope",
+      },
     },
     opts = {
       global_settings = {
         save_on_toggle = true,
         save_on_change = true,
+        enter_on_sendcmd = false,
+        tmux_autoclose_windows = false,
+        excluded_filetypes = { "harpoon" },
+        mark_branch = false,
+      },
+      menu = {
+        width = vim.api.nvim_win_get_width(0) - 4,
       },
     },
   },
-
   -- Project management
   {
     "ahmedkhalf/project.nvim",
