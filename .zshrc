@@ -111,6 +111,42 @@ source /Users/anshkumar/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-sy
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+
+#Custom aliases
+alias brewup="brew update && brew upgrade && brew cleanup"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+
+# Set nvim as the default editor
+export EDITOR='nvim'
+export VISUAL='nvim'
+# Alias vi and vim to nvim
+alias vi='nvim'
+alias vim='nvim'
+
+#colorls
+alias ls='colorls'
+alias zshrc='vi ~/.zshrc'
+alias conf='cd ~/.config/ && vi .'
+alias szshrc='source ~/.zshrc'
+
+# JDK Runtime@21
+export PATH="/opt/homebrew/opt/openjdk@21/bin:$PATH"
+export JAVA_HOME="/opt/homebrew/opt/openjdk@21"
+export CPPFLAGS="-I/opt/homebrew/opt/openjdk@21/include"
+
+# Enable ZSH completion system
+autoload -Uz compinit
+compinit
+
+# Enable docker completion if not already enabled
+if [ $commands[docker] ]; then
+    source <(docker completion zsh)
+fi
+
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
 __conda_setup="$('/opt/homebrew/Caskroom/miniconda/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
@@ -126,28 +162,3 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
-#jdk11
-export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH"
-
-#Custom aliases
-alias brewup="brew update && brew upgrade && brew cleanup"
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-# mysql-client
-export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"
-export LDFLAGS="-L/opt/homebrew/opt/mysql-client/lib"
-export CPPFLAGS="-I/opt/homebrew/opt/mysql-client/include"
-
-# Set nvim as the default editor
-export EDITOR='nvim'
-export VISUAL='nvim'
-
-# Alias vi and vim to nvim
-alias vi='nvim'
-alias vim='nvim'
-
-#colorls
-alias ls='colorls'
